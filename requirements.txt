@@ -1,0 +1,17 @@
+pandas
+numpy
+scikit-learn
+xgboost
+shap
+matplotlib
+seaborn
+jupyter
+notebook
+langgraph
+langchain
+fastapi
+uvicorn
+streamlit
+psycopg2-binary
+python-dotenv
+requests
