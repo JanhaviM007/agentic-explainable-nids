@@ -21,6 +21,13 @@ data/processed/*
 
 # Environment variables
 .env
+.env.*
+!.env.example
+
+# Testing & Coverage
+.pytest_cache/
+.coverage
+htmlcov/
 
 # Model files
 *.pkl

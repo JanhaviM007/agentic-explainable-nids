@@ -1,0 +1,438 @@
+[
+  {
+    "technique_id": "T1071.001",
+    "technique_name": "Application Layer Protocol: Web Protocols",
+    "tactic_id": "TA0011",
+    "tactic_name": "Command and Control",
+    "description": "Adversaries may communicate using application layer web protocols (HTTP/HTTPS) to blend into existing outbound traffic. Low-and-slow periodic beaconing mimics benign heartbeat connections, frequently exhibiting consistent inter-arrival times (IAT).",
+    "url": "https://attack.mitre.org/techniques/T1071/001/",
+    "attack_categories": [
+      "Command-and-Control (C2) Beaconing",
+      "Botnet"
+    ],
+    "relevant_ports": [80, 443, 8080, 8443],
+    "relevant_features": [
+      "fwd_iat_mean",
+      "flow_duration",
+      "bwd_iat_mean",
+      "flow_iat_std",
+      "dst_port"
+    ],
+    "mitigations": [
+      {
+        "id": "M1031",
+        "name": "Network Intrusion Prevention",
+        "description": "Deploy network intrusion detection and prevention systems capable of identifying repeated beacon patterns and anomalous TLS session parameters."
+      },
+      {
+        "id": "M1037",
+        "name": "Filter Network Traffic",
+        "description": "Enforce outbound proxy filtering, inspect HTTPS headers/SNI, and block direct IP-based web requests that bypass DNS."
+      }
+    ]
+  },
+  {
+    "technique_id": "T1071.004",
+    "technique_name": "Application Layer Protocol: DNS",
+    "tactic_id": "TA0011",
+    "tactic_name": "Command and Control",
+    "description": "Adversaries may use the Domain Name System (DNS) protocol for command and control signaling and data tunneling. High frequency of TXT/NULL record queries, high Shannon entropy subdomains, and oversized DNS payloads indicate tunneling activity.",
+    "url": "https://attack.mitre.org/techniques/T1071/004/",
+    "attack_categories": [
+      "DNS Tunneling / Data Exfiltration"
+    ],
+    "relevant_ports": [53],
+    "relevant_features": [
+      "packet_length_mean",
+      "total_fwd_packets",
+      "fwd_header_length",
+      "dst_port",
+      "flow_bytes_s"
+    ],
+    "mitigations": [
+      {
+        "id": "M1037",
+        "name": "Filter Network Traffic (DNS Filtering)",
+        "description": "Route all internal DNS traffic through hardened internal resolvers; sinkhole newly registered domains and block unauthorized outbound UDP/TCP port 53."
+      },
+      {
+        "id": "M1031",
+        "name": "Network Intrusion Prevention",
+        "description": "Inspect DNS query lengths and entropy to flag tunneled text/hex data in labels."
+      }
+    ]
+  },
+  {
+    "technique_id": "T1048.003",
+    "technique_name": "Exfiltration Over Alternative Protocol: Exfiltration Over Unencrypted/Non-C2 Protocol",
+    "tactic_id": "TA0010",
+    "tactic_name": "Exfiltration",
+    "description": "Adversaries may steal data by encoding it inside standard non-C2 network protocols such as DNS, ICMP, or covert channels to circumvent data loss prevention (DLP) controls.",
+    "url": "https://attack.mitre.org/techniques/T1048/003/",
+    "attack_categories": [
+      "DNS Tunneling / Data Exfiltration"
+    ],
+    "relevant_ports": [53, 0],
+    "relevant_features": [
+      "total_fwd_packets",
+      "fwd_packet_length_mean",
+      "subflow_fwd_bytes"
+    ],
+    "mitigations": [
+      {
+        "id": "M1057",
+        "name": "Data Loss Prevention",
+        "description": "Monitor and restrict outbound volumetric flows across unconventional channels."
+      }
+    ]
+  },
+  {
+    "technique_id": "T1021.002",
+    "technique_name": "Remote Services: SMB/Windows Admin Shares",
+    "tactic_id": "TA0008",
+    "tactic_name": "Lateral Movement",
+    "description": "Adversaries may abuse Server Message Block (SMB) and administrative shares (e.g., C$, ADMIN$, IPC$) to transfer files, execute commands remotely, and propagate laterally across internal subnets.",
+    "url": "https://attack.mitre.org/techniques/T1021/002/",
+    "attack_categories": [
+      "Lateral Movement"
+    ],
+    "relevant_ports": [445, 139],
+    "relevant_features": [
+      "dst_port",
+      "flow_duration",
+      "bwd_packet_length_std",
+      "total_bwd_packets"
+    ],
+    "mitigations": [
+      {
+        "id": "M1030",
+        "name": "Network Segmentation",
+        "description": "Segment internal workstation networks from servers and restrict workstation-to-workstation SMB communications via host firewalls."
+      },
+      {
+        "id": "M1026",
+        "name": "Privileged Account Management",
+        "description": "Disable default administrator shares and prevent domain admin accounts from authenticating to non-domain controller endpoints."
+      }
+    ]
+  },
+  {
+    "technique_id": "T1021.004",
+    "technique_name": "Remote Services: SSH",
+    "tactic_id": "TA0008",
+    "tactic_name": "Lateral Movement",
+    "description": "Adversaries may use Secure Shell (SSH) connections with compromised credentials or stolen private keys to log into internal hosts and move laterally across enterprise systems.",
+    "url": "https://attack.mitre.org/techniques/T1021/004/",
+    "attack_categories": [
+      "Lateral Movement",
+      "Brute Force"
+    ],
+    "relevant_ports": [22],
+    "relevant_features": [
+      "dst_port",
+      "flow_duration",
+      "total_fwd_packets",
+      "bwd_packet_length_mean"
+    ],
+    "mitigations": [
+      {
+        "id": "M1032",
+        "name": "Multi-Factor Authentication",
+        "description": "Require MFA for SSH bastions and use certificate-based or hardware token authentication instead of passwords."
+      },
+      {
+        "id": "M1035",
+        "name": "Limit Access to Resource Over Network",
+        "description": "Restrict SSH ingress to designated management jump boxes."
+      }
+    ]
+  },
+  {
+    "technique_id": "T1059.001",
+    "technique_name": "Command and Scripting Interpreter: PowerShell",
+    "tactic_id": "TA0002",
+    "tactic_name": "Execution",
+    "description": "Adversaries abuse PowerShell (a Living-off-the-Land binary) to execute malicious code in memory without dropping executables to disk, frequently spawning suspicious outbound network connections.",
+    "url": "https://attack.mitre.org/techniques/T1059/001/",
+    "attack_categories": [
+      "Living-off-the-Land (LotL)",
+      "Infiltration"
+    ],
+    "relevant_ports": [5985, 5986, 80, 443],
+    "relevant_features": [
+      "flow_duration",
+      "fwd_header_length",
+      "init_win_bytes_forward"
+    ],
+    "mitigations": [
+      {
+        "id": "M1038",
+        "name": "Execution Prevention",
+        "description": "Enforce PowerShell Constrained Language Mode (CLM) and deploy application control policies such as AppLocker/WDAC."
+      },
+      {
+        "id": "M1047",
+        "name": "Audit",
+        "description": "Enable PowerShell script block logging (Event ID 4104) and transcription logging."
+      }
+    ]
+  },
+  {
+    "technique_id": "T1047",
+    "technique_name": "Windows Management Instrumentation",
+    "tactic_id": "TA0002",
+    "tactic_name": "Execution",
+    "description": "Adversaries abuse Windows Management Instrumentation (WMI) to execute malicious tasks and orchestrate stealthy lateral operations via RPC/DCOM.",
+    "url": "https://attack.mitre.org/techniques/T1047/",
+    "attack_categories": [
+      "Living-off-the-Land (LotL)",
+      "Lateral Movement"
+    ],
+    "relevant_ports": [135, 445],
+    "relevant_features": [
+      "dst_port",
+      "flow_duration",
+      "total_fwd_packets"
+    ],
+    "mitigations": [
+      {
+        "id": "M1026",
+        "name": "Privileged Account Management",
+        "description": "Limit local administrative rights and restrict remote WMI access via RPC endpoint filtering."
+      }
+    ]
+  },
+  {
+    "technique_id": "T1573.002",
+    "technique_name": "Encrypted Channel: Asymmetric Cryptography",
+    "tactic_id": "TA0011",
+    "tactic_name": "Command and Control",
+    "description": "Adversaries negotiate encrypted sessions (e.g., custom TLS configurations or self-signed certificates) to shield command and control payloads from deep packet inspection.",
+    "url": "https://attack.mitre.org/techniques/T1573/002/",
+    "attack_categories": [
+      "Encrypted Traffic Anomaly",
+      "Command-and-Control (C2) Beaconing"
+    ],
+    "relevant_ports": [443, 8443],
+    "relevant_features": [
+      "flow_duration",
+      "fwd_iat_mean",
+      "bwd_packet_length_std",
+      "init_win_bytes_backward"
+    ],
+    "mitigations": [
+      {
+        "id": "M1031",
+        "name": "Network Intrusion Prevention",
+        "description": "Perform TLS fingerprinting (JA3/JA4) and inspect certificate validity, issuance authority, and SNI discrepancies."
+      }
+    ]
+  },
+  {
+    "technique_id": "T1498",
+    "technique_name": "Network Denial of Service",
+    "tactic_id": "TA0040",
+    "tactic_name": "Impact",
+    "description": "Adversaries perform network denial of service (DoS) attacks targeting external network services or internal network infrastructure to cause unavailability through high packet rates or resource exhaustion.",
+    "url": "https://attack.mitre.org/techniques/T1498/",
+    "attack_categories": [
+      "DoS/DDoS"
+    ],
+    "relevant_ports": [80, 443, 53],
+    "relevant_features": [
+      "flow_packets_s",
+      "flow_bytes_s",
+      "total_fwd_packets",
+      "flow_duration"
+    ],
+    "mitigations": [
+      {
+        "id": "M1037",
+        "name": "Filter Network Traffic",
+        "description": "Implement upstream rate limiting, SYN flood cookies, and cloud-based DDoS scrubbing centers."
+      }
+    ]
+  },
+  {
+    "technique_id": "T1110",
+    "technique_name": "Brute Force",
+    "tactic_id": "TA0006",
+    "tactic_name": "Credential Access",
+    "description": "Adversaries may use brute force techniques to systematically guess user credentials across protocols such as SSH, RDP, FTP, or HTTP forms.",
+    "url": "https://attack.mitre.org/techniques/T1110/",
+    "attack_categories": [
+      "Brute Force"
+    ],
+    "relevant_ports": [22, 3389, 21, 80],
+    "relevant_features": [
+      "flow_duration",
+      "fwd_iat_std",
+      "flow_packets_s",
+      "dst_port"
+    ],
+    "mitigations": [
+      {
+        "id": "M1036",
+        "name": "Account Use Policies",
+        "description": "Implement account lockout thresholds, progressive login delays, and enforce multi-factor authentication."
+      }
+    ]
+  },
+  {
+    "technique_id": "T1046",
+    "technique_name": "Network Service Discovery",
+    "tactic_id": "TA0007",
+    "tactic_name": "Discovery",
+    "description": "Adversaries attempt to discover open network services and listening ports across remote hosts using tools like Nmap, scanning multiple destination ports in a short duration.",
+    "url": "https://attack.mitre.org/techniques/T1046/",
+    "attack_categories": [
+      "Port Scan / Reconnaissance"
+    ],
+    "relevant_ports": [],
+    "relevant_features": [
+      "flow_duration",
+      "total_fwd_packets",
+      "packet_length_std",
+      "flow_iat_mean"
+    ],
+    "mitigations": [
+      {
+        "id": "M1031",
+        "name": "Network Intrusion Prevention",
+        "description": "Configure stateful firewalls to detect port sweeps and automatically blacklist offending source IPs."
+      }
+    ]
+  },
+  {
+    "technique_id": "T1190",
+    "technique_name": "Exploit Public-Facing Application",
+    "tactic_id": "TA0001",
+    "tactic_name": "Initial Access",
+    "description": "Adversaries take advantage of vulnerabilities in Internet-facing applications (SQL injection, XSS, RCE) to establish initial footholds.",
+    "url": "https://attack.mitre.org/techniques/T1190/",
+    "attack_categories": [
+      "Web Attack / Injection"
+    ],
+    "relevant_ports": [80, 443, 8080],
+    "relevant_features": [
+      "fwd_packet_length_mean",
+      "packet_length_mean",
+      "flow_duration"
+    ],
+    "mitigations": [
+      {
+        "id": "M1050",
+        "name": "Exploit Protection",
+        "description": "Deploy a Web Application Firewall (WAF) to inspect payload content for injection signatures."
+      },
+      {
+        "id": "M1051",
+        "name": "Update Software",
+        "description": "Maintain a rigorous vulnerability patch management schedule for all public web services."
+      }
+    ]
+  },
+  {
+    "technique_id": "T1569.002",
+    "technique_name": "System Services: Service Execution",
+    "tactic_id": "TA0002",
+    "tactic_name": "Execution",
+    "description": "Adversaries may abuse the Windows Service Control Manager or tools like PsExec to execute commands remotely or escalate privileges.",
+    "url": "https://attack.mitre.org/techniques/T1569/002/",
+    "attack_categories": [
+      "Living-off-the-Land (LotL)",
+      "Lateral Movement"
+    ],
+    "relevant_ports": [445, 139],
+    "relevant_features": ["dst_port", "flow_duration", "total_fwd_packets"],
+    "mitigations": [
+      {
+        "id": "M1026",
+        "name": "Privileged Account Management",
+        "description": "Restrict remote service creation privileges to dedicated administrative workstations."
+      }
+    ]
+  },
+  {
+    "technique_id": "T1584",
+    "technique_name": "Compromise Infrastructure",
+    "tactic_id": "TA0042",
+    "tactic_name": "Resource Development",
+    "description": "Adversaries may compromise third-party systems or botnet nodes to coordinate distributed denial of service or proxy malicious command channels.",
+    "url": "https://attack.mitre.org/techniques/T1584/",
+    "attack_categories": [
+      "Botnet",
+      "Command-and-Control (C2) Beaconing"
+    ],
+    "relevant_ports": [80, 443, 6667],
+    "relevant_features": ["flow_packets_s", "dst_port", "fwd_iat_mean"],
+    "mitigations": [
+      {
+        "id": "M1031",
+        "name": "Network Intrusion Prevention",
+        "description": "Filter traffic to known botnet controller C2 IP and domain blocklists."
+      }
+    ]
+  },
+  {
+    "technique_id": "T1195",
+    "technique_name": "Supply Chain Compromise",
+    "tactic_id": "TA0001",
+    "tactic_name": "Initial Access",
+    "description": "Adversaries may manipulate products or network delivery mechanisms prior to receipt by final consumers to achieve infiltration.",
+    "url": "https://attack.mitre.org/techniques/T1195/",
+    "attack_categories": [
+      "Infiltration"
+    ],
+    "relevant_ports": [443, 80],
+    "relevant_features": ["flow_duration", "total_fwd_packets"],
+    "mitigations": [
+      {
+        "id": "M1051",
+        "name": "Update Software",
+        "description": "Verify code signatures and cryptographic hashes of third-party dependencies."
+      }
+    ]
+  },
+  {
+    "technique_id": "T1573",
+    "technique_name": "Encrypted Channel",
+    "tactic_id": "TA0011",
+    "tactic_name": "Command and Control",
+    "description": "Adversaries may employ a cryptographic algorithm to conceal command and control traffic.",
+    "url": "https://attack.mitre.org/techniques/T1573/",
+    "attack_categories": [
+      "Encrypted Traffic Anomaly",
+      "Command-and-Control (C2) Beaconing"
+    ],
+    "relevant_ports": [443, 8443],
+    "relevant_features": ["flow_duration", "fwd_iat_mean"],
+    "mitigations": [
+      {
+        "id": "M1031",
+        "name": "Network Intrusion Prevention",
+        "description": "Inspect TLS handshake parameters and JA3/JA4 fingerprints."
+      }
+    ]
+  },
+  {
+    "technique_id": "T1048",
+    "technique_name": "Exfiltration Over Alternative Protocol",
+    "tactic_id": "TA0010",
+    "tactic_name": "Exfiltration",
+    "description": "Adversaries may steal data by sending it via an alternative protocol to avoid detection.",
+    "url": "https://attack.mitre.org/techniques/T1048/",
+    "attack_categories": [
+      "DNS Tunneling / Data Exfiltration"
+    ],
+    "relevant_ports": [53],
+    "relevant_features": ["packet_length_mean", "total_fwd_packets"],
+    "mitigations": [
+      {
+        "id": "M1037",
+        "name": "Filter Network Traffic",
+        "description": "Block unauthorized egress protocols from internal servers."
+      }
+    ]
+  }
+]

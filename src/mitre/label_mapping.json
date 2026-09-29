@@ -1,0 +1,122 @@
+{
+  "BENIGN": {
+    "category": "Benign Traffic",
+    "technique_ids": [],
+    "tactic": "None",
+    "default_severity": "LOW"
+  },
+  "Bot": {
+    "category": "Botnet",
+    "technique_ids": ["T1584", "T1071.001"],
+    "tactic": "Command and Control",
+    "default_severity": "HIGH"
+  },
+  "PortScan": {
+    "category": "Port Scan / Reconnaissance",
+    "technique_ids": ["T1046"],
+    "tactic": "Discovery",
+    "default_severity": "MEDIUM"
+  },
+  "Infiltration": {
+    "category": "Infiltration",
+    "technique_ids": ["T1195", "T1059.001"],
+    "tactic": "Initial Access",
+    "default_severity": "HIGH"
+  },
+  "DoS Hulk": {
+    "category": "DoS/DDoS",
+    "technique_ids": ["T1498"],
+    "tactic": "Impact",
+    "default_severity": "MEDIUM"
+  },
+  "DoS GoldenEye": {
+    "category": "DoS/DDoS",
+    "technique_ids": ["T1498"],
+    "tactic": "Impact",
+    "default_severity": "MEDIUM"
+  },
+  "DDoS": {
+    "category": "DoS/DDoS",
+    "technique_ids": ["T1498"],
+    "tactic": "Impact",
+    "default_severity": "HIGH"
+  },
+  "FTP-Patator": {
+    "category": "Brute Force",
+    "technique_ids": ["T1110"],
+    "tactic": "Credential Access",
+    "default_severity": "MEDIUM"
+  },
+  "SSH-Patator": {
+    "category": "Brute Force",
+    "technique_ids": ["T1110", "T1021.004"],
+    "tactic": "Credential Access",
+    "default_severity": "HIGH"
+  },
+  "Web Attack Brute Force": {
+    "category": "Web Attack / Injection",
+    "technique_ids": ["T1110", "T1190"],
+    "tactic": "Credential Access",
+    "default_severity": "MEDIUM"
+  },
+  "Web Attack XSS": {
+    "category": "Web Attack / Injection",
+    "technique_ids": ["T1190"],
+    "tactic": "Initial Access",
+    "default_severity": "MEDIUM"
+  },
+  "Web Attack Sql Injection": {
+    "category": "Web Attack / Injection",
+    "technique_ids": ["T1190"],
+    "tactic": "Initial Access",
+    "default_severity": "HIGH"
+  },
+  "Heartbleed": {
+    "category": "Web Attack / Injection",
+    "technique_ids": ["T1190"],
+    "tactic": "Initial Access",
+    "default_severity": "HIGH"
+  },
+  "C2_Beaconing": {
+    "category": "Command-and-Control (C2) Beaconing",
+    "technique_ids": ["T1071.001", "T1573.002", "T1573"],
+    "tactic": "Command and Control",
+    "default_severity": "CRITICAL"
+  },
+  "DNS_Tunneling": {
+    "category": "DNS Tunneling / Data Exfiltration",
+    "technique_ids": ["T1071.004", "T1048.003", "T1048"],
+    "tactic": "Command and Control",
+    "default_severity": "CRITICAL"
+  },
+  "Lateral_Movement": {
+    "category": "Lateral Movement",
+    "technique_ids": ["T1021.002", "T1021.004"],
+    "tactic": "Lateral Movement",
+    "default_severity": "HIGH"
+  },
+  "LotL_PowerShell": {
+    "category": "Living-off-the-Land (LotL)",
+    "technique_ids": ["T1059.001"],
+    "tactic": "Execution",
+    "default_severity": "HIGH"
+  },
+  "LotL_WMI": {
+    "category": "Living-off-the-Land (LotL)",
+    "technique_ids": ["T1047", "T1021.002"],
+    "tactic": "Execution",
+    "default_severity": "HIGH"
+  },
+  "LotL_PsExec": {
+    "category": "Living-off-the-Land (LotL)",
+    "technique_ids": ["T1569.002", "T1021.002"],
+    "tactic": "Execution",
+    "default_severity": "HIGH"
+  },
+  "Encrypted_Traffic_Anomaly": {
+    "category": "Encrypted Traffic Anomaly",
+    "technique_ids": ["T1573.002", "T1573"],
+    "tactic": "Command and Control",
+    "default_severity": "HIGH"
+  }
+}
