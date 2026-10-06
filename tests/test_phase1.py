@@ -11,6 +11,7 @@ from fastapi.testclient import TestClient
 from src.api.main import app
 from src.api.schemas import AlertInput, DetectionAlert, FeatureContribution
 from src.detector import MockDetector, SklearnModelDetector, get_detector
+from src.detector.adapter import normalize_detection_alert
 from src.mitre.service import MitreAttackService
 
 client = TestClient(app)
@@ -127,6 +128,35 @@ def test_detection_alert_bidirectional_conversion():
     assert reconstructed.flow_id == "FLOW-CONV"
     assert reconstructed.src_ip == "192.168.1.42"
     assert reconstructed.top_features[0].name == "dst_port"
+
+
+def test_normalize_detection_alert_from_raw_model_output():
+    """Verify raw model output is normalized into a schema-valid DetectionAlert."""
+    raw_output = {
+        "flow_id": "FLOW-NORMALIZE-001",
+        "timestamp": "2026-09-29T12:00:00Z",
+        "src_ip": "192.168.1.30",
+        "dst_ip": "185.220.101.5",
+        "src_port": 50000,
+        "dst_port": 443,
+        "protocol": "TCP",
+        "predicted_label": "C2_Beaconing",
+        "confidence": 0.96,
+        "top_features": [
+            {"name": "fwd_iat_mean", "value": 21.8, "shap_value": 0.58, "description": "Beacon interval"},
+            {"name": "flow_duration", "value": 182000, "shap_value": 0.21, "description": "Long-lived session"},
+        ],
+        "metadata": {"model_source": "raw_model_v1", "flow_duration": 182000},
+    }
+
+    alert = normalize_detection_alert(raw_output)
+
+    assert isinstance(alert, DetectionAlert)
+    assert alert.flow_id == "FLOW-NORMALIZE-001"
+    assert alert.predicted_label == "C2_Beaconing"
+    assert alert.confidence == 0.96
+    assert alert.top_features[0].name == "fwd_iat_mean"
+    assert alert.metadata["model_source"] == "raw_model_v1"
 
 
 # ============================================================================

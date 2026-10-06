@@ -15,12 +15,77 @@ from typing import Any, Dict, List, Optional, Union
 
 import joblib
 
-from src.api.schemas import DetectionAlert, FeatureContribution
+from src.api.schemas import AlertInput, DetectionAlert, FeatureContribution
 
 logger = logging.getLogger(__name__)
 
 DEFAULT_MOCK_PATH = Path(__file__).resolve().parent.parent.parent / "tests" / "mock_alerts.json"
 DEFAULT_MODEL_PATH = Path(__file__).resolve().parent.parent.parent / "data" / "models" / "detector_model.joblib"
+
+
+def normalize_detection_alert(raw_alert: Union[DetectionAlert, AlertInput, Dict[str, Any]]) -> DetectionAlert:
+    """Normalize raw model payloads or legacy alert inputs into a validated DetectionAlert.
+
+    This is the project-wide contract boundary between the ML detection layer and the
+    agent orchestration layer. It guarantees every downstream tool sees a schema-valid
+    object even when the upstream model emits a looser dictionary structure.
+    """
+    if isinstance(raw_alert, DetectionAlert):
+        return raw_alert
+
+    if isinstance(raw_alert, AlertInput):
+        return raw_alert.to_detection_alert()
+
+    if not isinstance(raw_alert, dict):
+        raise TypeError(
+            "Expected DetectionAlert, AlertInput, or raw model dict, "
+            f"got {type(raw_alert).__name__}"
+        )
+
+    payload = dict(raw_alert)
+
+    if "flow_id" not in payload and "alert_id" in payload:
+        payload["flow_id"] = payload["alert_id"]
+
+    if "predicted_label" not in payload and "detected_attack" in payload:
+        payload["predicted_label"] = payload["detected_attack"]
+
+    if "network_metadata" in payload and "src_ip" not in payload:
+        network_metadata = payload["network_metadata"] or {}
+        payload["src_ip"] = network_metadata.get("src_ip")
+        payload["dst_ip"] = network_metadata.get("dst_ip")
+        payload["src_port"] = network_metadata.get("src_port")
+        payload["dst_port"] = network_metadata.get("dst_port")
+        payload["protocol"] = network_metadata.get("protocol", payload.get("protocol", "TCP"))
+
+    if "top_features" not in payload and "shap_explanations" in payload:
+        features = []
+        for feature in payload["shap_explanations"]:
+            if isinstance(feature, dict):
+                features.append(
+                    FeatureContribution(
+                        name=feature.get("feature_name") or feature.get("name") or "unknown_feature",
+                        shap_value=float(feature.get("shap_value", 0.0)),
+                        value=feature.get("feature_value", feature.get("value")),
+                        description=feature.get("description"),
+                    )
+                )
+        payload["top_features"] = features
+
+    if "metadata" not in payload and "raw_features" in payload:
+        payload["metadata"] = payload["raw_features"]
+
+    if "confidence" not in payload and "score" in payload:
+        payload["confidence"] = payload["score"]
+
+    if "model_source" not in payload and "metadata" in payload and isinstance(payload["metadata"], dict):
+        payload["model_source"] = payload["metadata"].get("model_source", "Unknown")
+
+    # Backward-compatibility fallback for dicts coming directly from raw ML models.
+    if "flow_id" in payload and "predicted_label" in payload and "src_ip" in payload and "dst_ip" in payload:
+        return DetectionAlert(**payload)
+
+    raise ValueError("Raw model output does not contain the required fields for a DetectionAlert schema.")
 
 
 class DetectorAdapter(ABC):

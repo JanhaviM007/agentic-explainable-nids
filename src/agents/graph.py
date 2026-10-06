@@ -28,6 +28,7 @@ from src.api.schemas import (
     MitigationProposal,
     PipelineExecutionResponse,
 )
+from src.detector.adapter import normalize_detection_alert
 
 
 def build_nids_agent_graph():
@@ -77,13 +78,9 @@ def run_nids_pipeline(alert: Union[DetectionAlert, AlertInput]) -> PipelineExecu
     start_time = time.perf_counter()
     pipeline = get_agent_pipeline()
 
-    # Normalize to legacy AlertInput structure for internal agent node compatibility
-    if isinstance(alert, DetectionAlert):
-        legacy_alert = alert.to_alert_input()
-        alert_id = alert.flow_id
-    else:
-        legacy_alert = alert
-        alert_id = alert.alert_id
+    normalized_alert = normalize_detection_alert(alert)
+    legacy_alert = normalized_alert.to_alert_input()
+    alert_id = normalized_alert.flow_id
 
     # Initialize shared graph state
     initial_state: AgentState = {
