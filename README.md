@@ -29,6 +29,24 @@ This project aims to develop an explainable and agentic Network Intrusion Detect
 
 🚧 Under development
 
+## Run the SOC Frontend
+
+The React dashboard lives in `frontend/` and connects to the FastAPI backend. It includes an alert stream, SHAP evidence details, multi-agent investigations, MITRE ATT&CK search, and an analyst decision log.
+
+1. Start the API from the repository root:
+   ```bash
+   python -m uvicorn src.api.main:app --reload
+   ```
+2. In another terminal, install and start the frontend:
+   ```bash
+   cd frontend
+   npm install
+   npm run dev
+   ```
+3. Open the Vite URL shown in the terminal (normally `http://localhost:5173`).
+
+The frontend expects the API at `http://localhost:8000` by default. To use another API URL, copy `frontend/.env.example` to `frontend/.env` and set `VITE_API_BASE_URL`.
+
 ## Plugging In Student 1's ML Model
 1. Train your scikit-learn / XGBoost model on preprocessed flow features.
 2. Export your model artifact: `import joblib; joblib.dump(model, "data/models/detector_model.joblib")`.
