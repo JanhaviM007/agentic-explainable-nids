@@ -1,0 +1,1606 @@
+[
+  {
+    "flow_id": "FLOW-2026-001",
+    "timestamp": "2026-09-29T08:05:00Z",
+    "src_ip": "192.168.1.180",
+    "dst_ip": "185.220.101.5",
+    "src_port": 59628,
+    "dst_port": 443,
+    "protocol": "TCP",
+    "predicted_label": "C2_Beaconing",
+    "confidence": 0.95,
+    "top_features": [
+      {
+        "name": "fwd_iat_mean",
+        "shap_value": 0.48,
+        "value": 30.01,
+        "description": "Rigid 30-second beacon interval"
+      },
+      {
+        "name": "flow_duration",
+        "shap_value": 0.35,
+        "value": 120000000.0,
+        "description": "Persistent C2 session"
+      },
+      {
+        "name": "flow_bytes_s",
+        "shap_value": 0.22,
+        "value": 15.4,
+        "description": "Low throughput heartbeat polling"
+      }
+    ],
+    "metadata": {
+      "hostname": "WS-FIN-180",
+      "process_name": "powershell.exe",
+      "beacon_interval_sec": 30.0,
+      "chain_id": "CHAIN-01",
+      "chain_step": 1,
+      "model_source": "XGBoost-Ensemble-v1"
+    },
+    "expected_techniques": [
+      "T1071.001",
+      "T1573.002",
+      "T1573"
+    ],
+    "expected_severity": "CRITICAL"
+  },
+  {
+    "flow_id": "FLOW-2026-002",
+    "timestamp": "2026-09-29T08:18:00Z",
+    "src_ip": "192.168.1.180",
+    "dst_ip": "192.168.1.10",
+    "src_port": 50976,
+    "dst_port": 5985,
+    "protocol": "TCP",
+    "predicted_label": "LotL_PowerShell",
+    "confidence": 0.89,
+    "top_features": [
+      {
+        "name": "dst_port",
+        "shap_value": 0.44,
+        "value": 5985,
+        "description": "WinRM remote execution port"
+      },
+      {
+        "name": "init_win_bytes_forward",
+        "shap_value": 0.31,
+        "value": 8192,
+        "description": "Remote shell invocation window size"
+      }
+    ],
+    "metadata": {
+      "hostname": "WS-FIN-180",
+      "process_name": "powershell.exe",
+      "chain_id": "CHAIN-01",
+      "chain_step": 2,
+      "model_source": "XGBoost-Ensemble-v1"
+    },
+    "expected_techniques": [
+      "T1059.001"
+    ],
+    "expected_severity": "HIGH"
+  },
+  {
+    "flow_id": "FLOW-2026-003",
+    "timestamp": "2026-09-29T08:24:00Z",
+    "src_ip": "192.168.1.180",
+    "dst_ip": "192.168.1.10",
+    "src_port": 49561,
+    "dst_port": 445,
+    "protocol": "TCP",
+    "predicted_label": "Lateral_Movement",
+    "confidence": 0.92,
+    "top_features": [
+      {
+        "name": "dst_port",
+        "shap_value": 0.5,
+        "value": 445,
+        "description": "SMB administrative share IPC$ probe"
+      },
+      {
+        "name": "flow_duration",
+        "shap_value": 0.32,
+        "value": 650000.0,
+        "description": "Interactive SMB command session"
+      }
+    ],
+    "metadata": {
+      "hostname": "WS-FIN-180",
+      "target_hostname": "DC-PRIMARY-01",
+      "chain_id": "CHAIN-01",
+      "chain_step": 3,
+      "model_source": "XGBoost-Ensemble-v1"
+    },
+    "expected_techniques": [
+      "T1021.002",
+      "T1021.004"
+    ],
+    "expected_severity": "HIGH"
+  },
+  {
+    "flow_id": "FLOW-2026-004",
+    "timestamp": "2026-09-29T08:45:00Z",
+    "src_ip": "192.168.1.180",
+    "dst_ip": "8.8.8.8",
+    "src_port": 61301,
+    "dst_port": 53,
+    "protocol": "UDP",
+    "predicted_label": "DNS_Tunneling",
+    "confidence": 0.94,
+    "top_features": [
+      {
+        "name": "packet_length_mean",
+        "shap_value": 0.55,
+        "value": 490.2,
+        "description": "Excessive TXT DNS query payload length"
+      },
+      {
+        "name": "total_fwd_packets",
+        "shap_value": 0.38,
+        "value": 1600,
+        "description": "Volumetric burst of 1600 tunneling requests"
+      }
+    ],
+    "metadata": {
+      "hostname": "WS-FIN-180",
+      "dns_query_length": 210,
+      "bytes_exfiltrated": 450000,
+      "chain_id": "CHAIN-01",
+      "chain_step": 4,
+      "model_source": "XGBoost-Ensemble-v1"
+    },
+    "expected_techniques": [
+      "T1071.004",
+      "T1048.003",
+      "T1048"
+    ],
+    "expected_severity": "CRITICAL"
+  },
+  {
+    "flow_id": "FLOW-2026-005",
+    "timestamp": "2026-09-29T09:00:00Z",
+    "src_ip": "198.51.100.24",
+    "dst_ip": "10.0.4.77",
+    "src_port": 53658,
+    "dst_port": 443,
+    "protocol": "TCP",
+    "predicted_label": "Web Attack Sql Injection",
+    "confidence": 0.91,
+    "top_features": [
+      {
+        "name": "fwd_packet_length_mean",
+        "shap_value": 0.45,
+        "value": 680.0,
+        "description": "SQL statement payload in HTTP POST"
+      },
+      {
+        "name": "flow_duration",
+        "shap_value": 0.3,
+        "value": 150000.0,
+        "description": "Quick injection response"
+      }
+    ],
+    "metadata": {
+      "hostname": "WEB-SRV-01",
+      "uri": "/api/v1/login",
+      "chain_id": "CHAIN-02",
+      "chain_step": 1,
+      "model_source": "RandomForest-v1"
+    },
+    "expected_techniques": [
+      "T1190"
+    ],
+    "expected_severity": "HIGH"
+  },
+  {
+    "flow_id": "FLOW-2026-006",
+    "timestamp": "2026-09-29T09:15:00Z",
+    "src_ip": "10.0.4.77",
+    "dst_ip": "10.0.4.10",
+    "src_port": 53164,
+    "dst_port": 135,
+    "protocol": "TCP",
+    "predicted_label": "LotL_WMI",
+    "confidence": 0.88,
+    "top_features": [
+      {
+        "name": "dst_port",
+        "shap_value": 0.42,
+        "value": 135,
+        "description": "DCOM/RPC endpoint mapping port"
+      },
+      {
+        "name": "flow_duration",
+        "shap_value": 0.28,
+        "value": 420000.0,
+        "description": "Remote WMI invocation"
+      }
+    ],
+    "metadata": {
+      "hostname": "WEB-SRV-01",
+      "target_hostname": "DB-INTERNAL-01",
+      "chain_id": "CHAIN-02",
+      "chain_step": 2,
+      "model_source": "RandomForest-v1"
+    },
+    "expected_techniques": [
+      "T1047",
+      "T1021.002"
+    ],
+    "expected_severity": "HIGH"
+  },
+  {
+    "flow_id": "FLOW-2026-007",
+    "timestamp": "2026-09-29T09:30:00Z",
+    "src_ip": "10.0.4.77",
+    "dst_ip": "91.108.56.120",
+    "src_port": 52809,
+    "dst_port": 8443,
+    "protocol": "TCP",
+    "predicted_label": "Encrypted_Traffic_Anomaly",
+    "confidence": 0.93,
+    "top_features": [
+      {
+        "name": "init_win_bytes_backward",
+        "shap_value": 0.46,
+        "value": 256,
+        "description": "Non-standard TLS cipher negotiation"
+      },
+      {
+        "name": "flow_duration",
+        "shap_value": 0.34,
+        "value": 85000000.0,
+        "description": "Persistent encrypted tunnel"
+      }
+    ],
+    "metadata": {
+      "hostname": "WEB-SRV-01",
+      "ja3_hash": "a0e9f5d64349fb13191bc781f81f42e1",
+      "chain_id": "CHAIN-02",
+      "chain_step": 3,
+      "model_source": "RandomForest-v1"
+    },
+    "expected_techniques": [
+      "T1573.002",
+      "T1573"
+    ],
+    "expected_severity": "HIGH"
+  },
+  {
+    "flow_id": "FLOW-2026-008",
+    "timestamp": "2026-09-29T14:25:00Z",
+    "src_ip": "185.220.101.5",
+    "dst_ip": "192.168.1.23",
+    "src_port": 50687,
+    "dst_port": 443,
+    "protocol": "TCP",
+    "predicted_label": "Bot",
+    "confidence": 0.79,
+    "top_features": [
+      {
+        "name": "flow_duration",
+        "shap_value": 0.38,
+        "value": 50000.0,
+        "description": "Repeated auth attempt"
+      },
+      {
+        "name": "dst_port",
+        "shap_value": 0.3,
+        "value": 443,
+        "description": "Authentication service port"
+      }
+    ],
+    "metadata": {
+      "hostname": "HOST-5",
+      "bytes": 917534,
+      "duration": 15623608,
+      "model_source": "EnsembleDetector"
+    },
+    "expected_techniques": [
+      "T1584",
+      "T1071.001"
+    ],
+    "expected_severity": "HIGH"
+  },
+  {
+    "flow_id": "FLOW-2026-009",
+    "timestamp": "2026-09-30T02:54:00Z",
+    "src_ip": "103.208.220.12",
+    "dst_ip": "192.168.1.77",
+    "src_port": 58806,
+    "dst_port": 443,
+    "protocol": "TCP",
+    "predicted_label": "Bot",
+    "confidence": 0.81,
+    "top_features": [
+      {
+        "name": "flow_duration",
+        "shap_value": 0.38,
+        "value": 50000.0,
+        "description": "Repeated auth attempt"
+      },
+      {
+        "name": "dst_port",
+        "shap_value": 0.3,
+        "value": 443,
+        "description": "Authentication service port"
+      }
+    ],
+    "metadata": {
+      "hostname": "HOST-12",
+      "bytes": 1167316,
+      "duration": 54329958,
+      "model_source": "EnsembleDetector"
+    },
+    "expected_techniques": [
+      "T1584",
+      "T1071.001"
+    ],
+    "expected_severity": "HIGH"
+  },
+  {
+    "flow_id": "FLOW-2026-010",
+    "timestamp": "2026-09-29T09:53:00Z",
+    "src_ip": "91.108.56.120",
+    "dst_ip": "192.168.1.100",
+    "src_port": 51699,
+    "dst_port": 443,
+    "protocol": "TCP",
+    "predicted_label": "DoS Hulk",
+    "confidence": 0.9,
+    "top_features": [
+      {
+        "name": "flow_packets_s",
+        "shap_value": 0.58,
+        "value": 45000.0,
+        "description": "Extreme volumetric packet rate"
+      },
+      {
+        "name": "flow_bytes_s",
+        "shap_value": 0.39,
+        "value": 12000000.0,
+        "description": "High throughput resource exhaustion"
+      }
+    ],
+    "metadata": {
+      "hostname": "HOST-120",
+      "bytes": 903591,
+      "duration": 51247223,
+      "model_source": "EnsembleDetector"
+    },
+    "expected_techniques": [
+      "T1498"
+    ],
+    "expected_severity": "MEDIUM"
+  },
+  {
+    "flow_id": "FLOW-2026-011",
+    "timestamp": "2026-09-29T21:09:00Z",
+    "src_ip": "192.168.1.53",
+    "dst_ip": "192.168.1.25",
+    "src_port": 61107,
+    "dst_port": 5986,
+    "protocol": "TCP",
+    "predicted_label": "LotL_PowerShell",
+    "confidence": 0.86,
+    "top_features": [
+      {
+        "name": "flow_duration",
+        "shap_value": 0.4,
+        "value": 450000.0,
+        "description": "PowerShell command execution flow"
+      },
+      {
+        "name": "init_win_bytes_forward",
+        "shap_value": 0.28,
+        "value": 8192,
+        "description": "Script window signature"
+      }
+    ],
+    "metadata": {
+      "hostname": "HOST-53",
+      "bytes": 1927467,
+      "duration": 35995658,
+      "model_source": "EnsembleDetector"
+    },
+    "expected_techniques": [
+      "T1059.001"
+    ],
+    "expected_severity": "HIGH"
+  },
+  {
+    "flow_id": "FLOW-2026-012",
+    "timestamp": "2026-09-29T13:55:00Z",
+    "src_ip": "192.168.1.57",
+    "dst_ip": "198.51.100.42",
+    "src_port": 58611,
+    "dst_port": 53,
+    "protocol": "UDP",
+    "predicted_label": "BENIGN",
+    "confidence": 0.16,
+    "top_features": [
+      {
+        "name": "flow_duration",
+        "shap_value": -0.42,
+        "value": 15000.0,
+        "description": "Normal human browser transaction"
+      },
+      {
+        "name": "fwd_iat_mean",
+        "shap_value": -0.38,
+        "value": 1.25,
+        "description": "Aperiodic human typing/browsing"
+      }
+    ],
+    "metadata": {
+      "hostname": "HOST-57",
+      "bytes": 807016,
+      "duration": 47293015,
+      "model_source": "EnsembleDetector"
+    },
+    "expected_techniques": [],
+    "expected_severity": "LOW"
+  },
+  {
+    "flow_id": "FLOW-2026-013",
+    "timestamp": "2026-09-29T12:02:00Z",
+    "src_ip": "192.168.1.30",
+    "dst_ip": "8.8.8.8",
+    "src_port": 63348,
+    "dst_port": 53,
+    "protocol": "UDP",
+    "predicted_label": "DNS_Tunneling",
+    "confidence": 0.95,
+    "top_features": [
+      {
+        "name": "packet_length_mean",
+        "shap_value": 0.51,
+        "value": 475.0,
+        "description": "Abnormally large DNS query length"
+      },
+      {
+        "name": "total_fwd_packets",
+        "shap_value": 0.36,
+        "value": 1200,
+        "description": "High query frequency"
+      }
+    ],
+    "metadata": {
+      "hostname": "HOST-30",
+      "bytes": 424130,
+      "duration": 25519839,
+      "model_source": "EnsembleDetector"
+    },
+    "expected_techniques": [
+      "T1071.004",
+      "T1048.003",
+      "T1048"
+    ],
+    "expected_severity": "CRITICAL"
+  },
+  {
+    "flow_id": "FLOW-2026-014",
+    "timestamp": "2026-09-29T19:09:00Z",
+    "src_ip": "192.168.1.65",
+    "dst_ip": "103.208.220.12",
+    "src_port": 53526,
+    "dst_port": 8443,
+    "protocol": "TCP",
+    "predicted_label": "Encrypted_Traffic_Anomaly",
+    "confidence": 0.9,
+    "top_features": [
+      {
+        "name": "fwd_iat_mean",
+        "shap_value": 0.44,
+        "value": 60.0,
+        "description": "Periodic beaconing rhythm"
+      },
+      {
+        "name": "flow_duration",
+        "shap_value": 0.32,
+        "value": 90000000.0,
+        "description": "Persistent external channel"
+      }
+    ],
+    "metadata": {
+      "hostname": "HOST-65",
+      "bytes": 299983,
+      "duration": 40888089,
+      "model_source": "EnsembleDetector"
+    },
+    "expected_techniques": [
+      "T1573.002",
+      "T1573"
+    ],
+    "expected_severity": "HIGH"
+  },
+  {
+    "flow_id": "FLOW-2026-015",
+    "timestamp": "2026-09-30T07:20:00Z",
+    "src_ip": "192.168.1.68",
+    "dst_ip": "192.168.1.54",
+    "src_port": 64313,
+    "dst_port": 139,
+    "protocol": "TCP",
+    "predicted_label": "LotL_PsExec",
+    "confidence": 0.88,
+    "top_features": [
+      {
+        "name": "dst_port",
+        "shap_value": 0.47,
+        "value": 139,
+        "description": "Internal port 139 probe"
+      },
+      {
+        "name": "flow_duration",
+        "shap_value": 0.29,
+        "value": 350000.0,
+        "description": "Short burst connection"
+      }
+    ],
+    "metadata": {
+      "hostname": "HOST-68",
+      "bytes": 2336516,
+      "duration": 14748124,
+      "model_source": "EnsembleDetector"
+    },
+    "expected_techniques": [
+      "T1569.002",
+      "T1021.002"
+    ],
+    "expected_severity": "HIGH"
+  },
+  {
+    "flow_id": "FLOW-2026-016",
+    "timestamp": "2026-09-29T20:44:00Z",
+    "src_ip": "192.168.1.24",
+    "dst_ip": "198.51.100.42",
+    "src_port": 55724,
+    "dst_port": 80,
+    "protocol": "TCP",
+    "predicted_label": "BENIGN",
+    "confidence": 0.28,
+    "top_features": [
+      {
+        "name": "flow_duration",
+        "shap_value": -0.42,
+        "value": 15000.0,
+        "description": "Normal human browser transaction"
+      },
+      {
+        "name": "fwd_iat_mean",
+        "shap_value": -0.38,
+        "value": 1.25,
+        "description": "Aperiodic human typing/browsing"
+      }
+    ],
+    "metadata": {
+      "hostname": "HOST-24",
+      "bytes": 1123486,
+      "duration": 4451842,
+      "model_source": "EnsembleDetector"
+    },
+    "expected_techniques": [],
+    "expected_severity": "LOW"
+  },
+  {
+    "flow_id": "FLOW-2026-017",
+    "timestamp": "2026-09-29T16:52:00Z",
+    "src_ip": "192.168.1.60",
+    "dst_ip": "103.208.220.12",
+    "src_port": 59890,
+    "dst_port": 53,
+    "protocol": "UDP",
+    "predicted_label": "BENIGN",
+    "confidence": 0.22,
+    "top_features": [
+      {
+        "name": "flow_duration",
+        "shap_value": -0.42,
+        "value": 15000.0,
+        "description": "Normal human browser transaction"
+      },
+      {
+        "name": "fwd_iat_mean",
+        "shap_value": -0.38,
+        "value": 1.25,
+        "description": "Aperiodic human typing/browsing"
+      }
+    ],
+    "metadata": {
+      "hostname": "HOST-60",
+      "bytes": 2094427,
+      "duration": 26560407,
+      "model_source": "EnsembleDetector"
+    },
+    "expected_techniques": [],
+    "expected_severity": "LOW"
+  },
+  {
+    "flow_id": "FLOW-2026-018",
+    "timestamp": "2026-09-30T07:36:00Z",
+    "src_ip": "192.168.1.88",
+    "dst_ip": "192.168.1.53",
+    "src_port": 61391,
+    "dst_port": 22,
+    "protocol": "TCP",
+    "predicted_label": "Lateral_Movement",
+    "confidence": 0.87,
+    "top_features": [
+      {
+        "name": "dst_port",
+        "shap_value": 0.47,
+        "value": 22,
+        "description": "Internal port 22 probe"
+      },
+      {
+        "name": "flow_duration",
+        "shap_value": 0.29,
+        "value": 350000.0,
+        "description": "Short burst connection"
+      }
+    ],
+    "metadata": {
+      "hostname": "HOST-88",
+      "bytes": 2452431,
+      "duration": 28761707,
+      "model_source": "EnsembleDetector"
+    },
+    "expected_techniques": [
+      "T1021.002",
+      "T1021.004"
+    ],
+    "expected_severity": "HIGH"
+  },
+  {
+    "flow_id": "FLOW-2026-019",
+    "timestamp": "2026-09-30T05:35:00Z",
+    "src_ip": "192.168.1.37",
+    "dst_ip": "194.26.29.112",
+    "src_port": 57237,
+    "dst_port": 53,
+    "protocol": "UDP",
+    "predicted_label": "DNS_Tunneling",
+    "confidence": 0.98,
+    "top_features": [
+      {
+        "name": "packet_length_mean",
+        "shap_value": 0.51,
+        "value": 475.0,
+        "description": "Abnormally large DNS query length"
+      },
+      {
+        "name": "total_fwd_packets",
+        "shap_value": 0.36,
+        "value": 1200,
+        "description": "High query frequency"
+      }
+    ],
+    "metadata": {
+      "hostname": "HOST-37",
+      "bytes": 381801,
+      "duration": 50729682,
+      "model_source": "EnsembleDetector"
+    },
+    "expected_techniques": [
+      "T1071.004",
+      "T1048.003",
+      "T1048"
+    ],
+    "expected_severity": "CRITICAL"
+  },
+  {
+    "flow_id": "FLOW-2026-020",
+    "timestamp": "2026-09-29T11:16:00Z",
+    "src_ip": "192.168.1.74",
+    "dst_ip": "194.26.29.112",
+    "src_port": 55456,
+    "dst_port": 80,
+    "protocol": "TCP",
+    "predicted_label": "BENIGN",
+    "confidence": 0.1,
+    "top_features": [
+      {
+        "name": "flow_duration",
+        "shap_value": -0.42,
+        "value": 15000.0,
+        "description": "Normal human browser transaction"
+      },
+      {
+        "name": "fwd_iat_mean",
+        "shap_value": -0.38,
+        "value": 1.25,
+        "description": "Aperiodic human typing/browsing"
+      }
+    ],
+    "metadata": {
+      "hostname": "HOST-74",
+      "bytes": 1601127,
+      "duration": 39999395,
+      "model_source": "EnsembleDetector"
+    },
+    "expected_techniques": [],
+    "expected_severity": "LOW"
+  },
+  {
+    "flow_id": "FLOW-2026-021",
+    "timestamp": "2026-09-30T01:38:00Z",
+    "src_ip": "194.26.29.112",
+    "dst_ip": "192.168.1.88",
+    "src_port": 61454,
+    "dst_port": 22,
+    "protocol": "TCP",
+    "predicted_label": "Bot",
+    "confidence": 0.93,
+    "top_features": [
+      {
+        "name": "flow_duration",
+        "shap_value": 0.38,
+        "value": 50000.0,
+        "description": "Repeated auth attempt"
+      },
+      {
+        "name": "dst_port",
+        "shap_value": 0.3,
+        "value": 22,
+        "description": "Authentication service port"
+      }
+    ],
+    "metadata": {
+      "hostname": "HOST-112",
+      "bytes": 1119645,
+      "duration": 51589787,
+      "model_source": "EnsembleDetector"
+    },
+    "expected_techniques": [
+      "T1584",
+      "T1071.001"
+    ],
+    "expected_severity": "HIGH"
+  },
+  {
+    "flow_id": "FLOW-2026-022",
+    "timestamp": "2026-09-30T07:32:00Z",
+    "src_ip": "192.168.1.20",
+    "dst_ip": "192.168.1.53",
+    "src_port": 57353,
+    "dst_port": 139,
+    "protocol": "TCP",
+    "predicted_label": "Lateral_Movement",
+    "confidence": 0.91,
+    "top_features": [
+      {
+        "name": "dst_port",
+        "shap_value": 0.47,
+        "value": 139,
+        "description": "Internal port 139 probe"
+      },
+      {
+        "name": "flow_duration",
+        "shap_value": 0.29,
+        "value": 350000.0,
+        "description": "Short burst connection"
+      }
+    ],
+    "metadata": {
+      "hostname": "HOST-20",
+      "bytes": 749820,
+      "duration": 34079940,
+      "model_source": "EnsembleDetector"
+    },
+    "expected_techniques": [
+      "T1021.002",
+      "T1021.004"
+    ],
+    "expected_severity": "HIGH"
+  },
+  {
+    "flow_id": "FLOW-2026-023",
+    "timestamp": "2026-09-29T13:17:00Z",
+    "src_ip": "192.168.1.84",
+    "dst_ip": "103.208.220.12",
+    "src_port": 51656,
+    "dst_port": 53,
+    "protocol": "UDP",
+    "predicted_label": "BENIGN",
+    "confidence": 0.14,
+    "top_features": [
+      {
+        "name": "flow_duration",
+        "shap_value": -0.42,
+        "value": 15000.0,
+        "description": "Normal human browser transaction"
+      },
+      {
+        "name": "fwd_iat_mean",
+        "shap_value": -0.38,
+        "value": 1.25,
+        "description": "Aperiodic human typing/browsing"
+      }
+    ],
+    "metadata": {
+      "hostname": "HOST-84",
+      "bytes": 1568808,
+      "duration": 51181233,
+      "model_source": "EnsembleDetector"
+    },
+    "expected_techniques": [],
+    "expected_severity": "LOW"
+  },
+  {
+    "flow_id": "FLOW-2026-024",
+    "timestamp": "2026-09-29T15:10:00Z",
+    "src_ip": "8.8.8.8",
+    "dst_ip": "192.168.1.22",
+    "src_port": 50984,
+    "dst_port": 80,
+    "protocol": "TCP",
+    "predicted_label": "Bot",
+    "confidence": 0.94,
+    "top_features": [
+      {
+        "name": "flow_duration",
+        "shap_value": 0.38,
+        "value": 50000.0,
+        "description": "Repeated auth attempt"
+      },
+      {
+        "name": "dst_port",
+        "shap_value": 0.3,
+        "value": 80,
+        "description": "Authentication service port"
+      }
+    ],
+    "metadata": {
+      "hostname": "HOST-8",
+      "bytes": 1522951,
+      "duration": 58980026,
+      "model_source": "EnsembleDetector"
+    },
+    "expected_techniques": [
+      "T1584",
+      "T1071.001"
+    ],
+    "expected_severity": "HIGH"
+  },
+  {
+    "flow_id": "FLOW-2026-025",
+    "timestamp": "2026-09-29T20:09:00Z",
+    "src_ip": "192.168.1.30",
+    "dst_ip": "8.8.8.8",
+    "src_port": 61143,
+    "dst_port": 53,
+    "protocol": "UDP",
+    "predicted_label": "DNS_Tunneling",
+    "confidence": 0.96,
+    "top_features": [
+      {
+        "name": "packet_length_mean",
+        "shap_value": 0.51,
+        "value": 475.0,
+        "description": "Abnormally large DNS query length"
+      },
+      {
+        "name": "total_fwd_packets",
+        "shap_value": 0.36,
+        "value": 1200,
+        "description": "High query frequency"
+      }
+    ],
+    "metadata": {
+      "hostname": "HOST-30",
+      "bytes": 2038891,
+      "duration": 54772393,
+      "model_source": "EnsembleDetector"
+    },
+    "expected_techniques": [
+      "T1071.004",
+      "T1048.003",
+      "T1048"
+    ],
+    "expected_severity": "CRITICAL"
+  },
+  {
+    "flow_id": "FLOW-2026-026",
+    "timestamp": "2026-09-29T12:01:00Z",
+    "src_ip": "192.168.1.36",
+    "dst_ip": "8.8.8.8",
+    "src_port": 64665,
+    "dst_port": 80,
+    "protocol": "TCP",
+    "predicted_label": "BENIGN",
+    "confidence": 0.21,
+    "top_features": [
+      {
+        "name": "flow_duration",
+        "shap_value": -0.42,
+        "value": 15000.0,
+        "description": "Normal human browser transaction"
+      },
+      {
+        "name": "fwd_iat_mean",
+        "shap_value": -0.38,
+        "value": 1.25,
+        "description": "Aperiodic human typing/browsing"
+      }
+    ],
+    "metadata": {
+      "hostname": "HOST-36",
+      "bytes": 2306543,
+      "duration": 11091482,
+      "model_source": "EnsembleDetector"
+    },
+    "expected_techniques": [],
+    "expected_severity": "LOW"
+  },
+  {
+    "flow_id": "FLOW-2026-027",
+    "timestamp": "2026-09-29T18:42:00Z",
+    "src_ip": "1.1.1.1",
+    "dst_ip": "192.168.1.45",
+    "src_port": 60832,
+    "dst_port": 21,
+    "protocol": "TCP",
+    "predicted_label": "Infiltration",
+    "confidence": 0.85,
+    "top_features": [
+      {
+        "name": "flow_duration",
+        "shap_value": 0.38,
+        "value": 50000.0,
+        "description": "Repeated auth attempt"
+      },
+      {
+        "name": "dst_port",
+        "shap_value": 0.3,
+        "value": 21,
+        "description": "Authentication service port"
+      }
+    ],
+    "metadata": {
+      "hostname": "HOST-1",
+      "bytes": 1307932,
+      "duration": 26785919,
+      "model_source": "EnsembleDetector"
+    },
+    "expected_techniques": [
+      "T1195",
+      "T1059.001"
+    ],
+    "expected_severity": "HIGH"
+  },
+  {
+    "flow_id": "FLOW-2026-028",
+    "timestamp": "2026-09-30T07:50:00Z",
+    "src_ip": "103.208.220.12",
+    "dst_ip": "192.168.1.28",
+    "src_port": 54691,
+    "dst_port": 21,
+    "protocol": "TCP",
+    "predicted_label": "LotL_WMI",
+    "confidence": 0.91,
+    "top_features": [
+      {
+        "name": "flow_duration",
+        "shap_value": 0.38,
+        "value": 50000.0,
+        "description": "Repeated auth attempt"
+      },
+      {
+        "name": "dst_port",
+        "shap_value": 0.3,
+        "value": 21,
+        "description": "Authentication service port"
+      }
+    ],
+    "metadata": {
+      "hostname": "HOST-12",
+      "bytes": 88724,
+      "duration": 39490729,
+      "model_source": "EnsembleDetector"
+    },
+    "expected_techniques": [
+      "T1047",
+      "T1021.002"
+    ],
+    "expected_severity": "HIGH"
+  },
+  {
+    "flow_id": "FLOW-2026-029",
+    "timestamp": "2026-09-30T04:34:00Z",
+    "src_ip": "192.168.1.27",
+    "dst_ip": "8.8.8.8",
+    "src_port": 50256,
+    "dst_port": 53,
+    "protocol": "UDP",
+    "predicted_label": "DNS_Tunneling",
+    "confidence": 0.85,
+    "top_features": [
+      {
+        "name": "packet_length_mean",
+        "shap_value": 0.51,
+        "value": 475.0,
+        "description": "Abnormally large DNS query length"
+      },
+      {
+        "name": "total_fwd_packets",
+        "shap_value": 0.36,
+        "value": 1200,
+        "description": "High query frequency"
+      }
+    ],
+    "metadata": {
+      "hostname": "HOST-27",
+      "bytes": 132255,
+      "duration": 57699155,
+      "model_source": "EnsembleDetector"
+    },
+    "expected_techniques": [
+      "T1071.004",
+      "T1048.003",
+      "T1048"
+    ],
+    "expected_severity": "CRITICAL"
+  },
+  {
+    "flow_id": "FLOW-2026-030",
+    "timestamp": "2026-09-29T20:56:00Z",
+    "src_ip": "192.168.1.82",
+    "dst_ip": "8.8.8.8",
+    "src_port": 57986,
+    "dst_port": 53,
+    "protocol": "UDP",
+    "predicted_label": "DNS_Tunneling",
+    "confidence": 0.89,
+    "top_features": [
+      {
+        "name": "packet_length_mean",
+        "shap_value": 0.51,
+        "value": 475.0,
+        "description": "Abnormally large DNS query length"
+      },
+      {
+        "name": "total_fwd_packets",
+        "shap_value": 0.36,
+        "value": 1200,
+        "description": "High query frequency"
+      }
+    ],
+    "metadata": {
+      "hostname": "HOST-82",
+      "bytes": 555456,
+      "duration": 48553368,
+      "model_source": "EnsembleDetector"
+    },
+    "expected_techniques": [
+      "T1071.004",
+      "T1048.003",
+      "T1048"
+    ],
+    "expected_severity": "CRITICAL"
+  },
+  {
+    "flow_id": "FLOW-2026-031",
+    "timestamp": "2026-09-30T05:09:00Z",
+    "src_ip": "103.208.220.12",
+    "dst_ip": "192.168.1.100",
+    "src_port": 50697,
+    "dst_port": 443,
+    "protocol": "TCP",
+    "predicted_label": "DoS GoldenEye",
+    "confidence": 0.91,
+    "top_features": [
+      {
+        "name": "flow_packets_s",
+        "shap_value": 0.58,
+        "value": 45000.0,
+        "description": "Extreme volumetric packet rate"
+      },
+      {
+        "name": "flow_bytes_s",
+        "shap_value": 0.39,
+        "value": 12000000.0,
+        "description": "High throughput resource exhaustion"
+      }
+    ],
+    "metadata": {
+      "hostname": "HOST-12",
+      "bytes": 407057,
+      "duration": 44233583,
+      "model_source": "EnsembleDetector"
+    },
+    "expected_techniques": [
+      "T1498"
+    ],
+    "expected_severity": "MEDIUM"
+  },
+  {
+    "flow_id": "FLOW-2026-032",
+    "timestamp": "2026-09-30T00:22:00Z",
+    "src_ip": "192.168.1.26",
+    "dst_ip": "192.168.1.32",
+    "src_port": 50145,
+    "dst_port": 443,
+    "protocol": "TCP",
+    "predicted_label": "LotL_PowerShell",
+    "confidence": 0.91,
+    "top_features": [
+      {
+        "name": "flow_duration",
+        "shap_value": 0.4,
+        "value": 450000.0,
+        "description": "PowerShell command execution flow"
+      },
+      {
+        "name": "init_win_bytes_forward",
+        "shap_value": 0.28,
+        "value": 8192,
+        "description": "Script window signature"
+      }
+    ],
+    "metadata": {
+      "hostname": "HOST-26",
+      "bytes": 1689216,
+      "duration": 48879586,
+      "model_source": "EnsembleDetector"
+    },
+    "expected_techniques": [
+      "T1059.001"
+    ],
+    "expected_severity": "HIGH"
+  },
+  {
+    "flow_id": "FLOW-2026-033",
+    "timestamp": "2026-09-29T21:14:00Z",
+    "src_ip": "192.168.1.44",
+    "dst_ip": "1.1.1.1",
+    "src_port": 56502,
+    "dst_port": 80,
+    "protocol": "TCP",
+    "predicted_label": "BENIGN",
+    "confidence": 0.08,
+    "top_features": [
+      {
+        "name": "flow_duration",
+        "shap_value": -0.42,
+        "value": 15000.0,
+        "description": "Normal human browser transaction"
+      },
+      {
+        "name": "fwd_iat_mean",
+        "shap_value": -0.38,
+        "value": 1.25,
+        "description": "Aperiodic human typing/browsing"
+      }
+    ],
+    "metadata": {
+      "hostname": "HOST-44",
+      "bytes": 588467,
+      "duration": 28321997,
+      "model_source": "EnsembleDetector"
+    },
+    "expected_techniques": [],
+    "expected_severity": "LOW"
+  },
+  {
+    "flow_id": "FLOW-2026-034",
+    "timestamp": "2026-09-29T15:55:00Z",
+    "src_ip": "192.168.1.29",
+    "dst_ip": "1.1.1.1",
+    "src_port": 62390,
+    "dst_port": 53,
+    "protocol": "UDP",
+    "predicted_label": "DNS_Tunneling",
+    "confidence": 0.96,
+    "top_features": [
+      {
+        "name": "packet_length_mean",
+        "shap_value": 0.51,
+        "value": 475.0,
+        "description": "Abnormally large DNS query length"
+      },
+      {
+        "name": "total_fwd_packets",
+        "shap_value": 0.36,
+        "value": 1200,
+        "description": "High query frequency"
+      }
+    ],
+    "metadata": {
+      "hostname": "HOST-29",
+      "bytes": 2308731,
+      "duration": 6580543,
+      "model_source": "EnsembleDetector"
+    },
+    "expected_techniques": [
+      "T1071.004",
+      "T1048.003",
+      "T1048"
+    ],
+    "expected_severity": "CRITICAL"
+  },
+  {
+    "flow_id": "FLOW-2026-035",
+    "timestamp": "2026-09-29T11:23:00Z",
+    "src_ip": "103.208.220.12",
+    "dst_ip": "192.168.1.41",
+    "src_port": 55810,
+    "dst_port": 22,
+    "protocol": "TCP",
+    "predicted_label": "Bot",
+    "confidence": 0.92,
+    "top_features": [
+      {
+        "name": "flow_duration",
+        "shap_value": 0.38,
+        "value": 50000.0,
+        "description": "Repeated auth attempt"
+      },
+      {
+        "name": "dst_port",
+        "shap_value": 0.3,
+        "value": 22,
+        "description": "Authentication service port"
+      }
+    ],
+    "metadata": {
+      "hostname": "HOST-12",
+      "bytes": 2037426,
+      "duration": 32313416,
+      "model_source": "EnsembleDetector"
+    },
+    "expected_techniques": [
+      "T1584",
+      "T1071.001"
+    ],
+    "expected_severity": "HIGH"
+  },
+  {
+    "flow_id": "FLOW-2026-036",
+    "timestamp": "2026-09-29T16:57:00Z",
+    "src_ip": "192.168.1.68",
+    "dst_ip": "185.220.101.5",
+    "src_port": 55548,
+    "dst_port": 80,
+    "protocol": "TCP",
+    "predicted_label": "BENIGN",
+    "confidence": 0.32,
+    "top_features": [
+      {
+        "name": "flow_duration",
+        "shap_value": -0.42,
+        "value": 15000.0,
+        "description": "Normal human browser transaction"
+      },
+      {
+        "name": "fwd_iat_mean",
+        "shap_value": -0.38,
+        "value": 1.25,
+        "description": "Aperiodic human typing/browsing"
+      }
+    ],
+    "metadata": {
+      "hostname": "HOST-68",
+      "bytes": 1112842,
+      "duration": 52628087,
+      "model_source": "EnsembleDetector"
+    },
+    "expected_techniques": [],
+    "expected_severity": "LOW"
+  },
+  {
+    "flow_id": "FLOW-2026-037",
+    "timestamp": "2026-09-30T01:11:00Z",
+    "src_ip": "192.168.1.82",
+    "dst_ip": "192.168.1.39",
+    "src_port": 52263,
+    "dst_port": 22,
+    "protocol": "TCP",
+    "predicted_label": "LotL_PsExec",
+    "confidence": 0.97,
+    "top_features": [
+      {
+        "name": "dst_port",
+        "shap_value": 0.47,
+        "value": 22,
+        "description": "Internal port 22 probe"
+      },
+      {
+        "name": "flow_duration",
+        "shap_value": 0.29,
+        "value": 350000.0,
+        "description": "Short burst connection"
+      }
+    ],
+    "metadata": {
+      "hostname": "HOST-82",
+      "bytes": 1244982,
+      "duration": 14619659,
+      "model_source": "EnsembleDetector"
+    },
+    "expected_techniques": [
+      "T1569.002",
+      "T1021.002"
+    ],
+    "expected_severity": "HIGH"
+  },
+  {
+    "flow_id": "FLOW-2026-038",
+    "timestamp": "2026-09-29T11:39:00Z",
+    "src_ip": "185.220.101.5",
+    "dst_ip": "192.168.1.26",
+    "src_port": 58723,
+    "dst_port": 80,
+    "protocol": "TCP",
+    "predicted_label": "Bot",
+    "confidence": 0.79,
+    "top_features": [
+      {
+        "name": "flow_duration",
+        "shap_value": 0.38,
+        "value": 50000.0,
+        "description": "Repeated auth attempt"
+      },
+      {
+        "name": "dst_port",
+        "shap_value": 0.3,
+        "value": 80,
+        "description": "Authentication service port"
+      }
+    ],
+    "metadata": {
+      "hostname": "HOST-5",
+      "bytes": 2000295,
+      "duration": 33755717,
+      "model_source": "EnsembleDetector"
+    },
+    "expected_techniques": [
+      "T1584",
+      "T1071.001"
+    ],
+    "expected_severity": "HIGH"
+  },
+  {
+    "flow_id": "FLOW-2026-039",
+    "timestamp": "2026-09-30T03:47:00Z",
+    "src_ip": "194.26.29.112",
+    "dst_ip": "192.168.1.28",
+    "src_port": 60214,
+    "dst_port": 21,
+    "protocol": "TCP",
+    "predicted_label": "LotL_WMI",
+    "confidence": 0.86,
+    "top_features": [
+      {
+        "name": "flow_duration",
+        "shap_value": 0.38,
+        "value": 50000.0,
+        "description": "Repeated auth attempt"
+      },
+      {
+        "name": "dst_port",
+        "shap_value": 0.3,
+        "value": 21,
+        "description": "Authentication service port"
+      }
+    ],
+    "metadata": {
+      "hostname": "HOST-112",
+      "bytes": 987016,
+      "duration": 27106918,
+      "model_source": "EnsembleDetector"
+    },
+    "expected_techniques": [
+      "T1047",
+      "T1021.002"
+    ],
+    "expected_severity": "HIGH"
+  },
+  {
+    "flow_id": "FLOW-2026-040",
+    "timestamp": "2026-09-29T13:45:00Z",
+    "src_ip": "192.168.1.25",
+    "dst_ip": "194.26.29.112",
+    "src_port": 56020,
+    "dst_port": 53,
+    "protocol": "UDP",
+    "predicted_label": "BENIGN",
+    "confidence": 0.22,
+    "top_features": [
+      {
+        "name": "flow_duration",
+        "shap_value": -0.42,
+        "value": 15000.0,
+        "description": "Normal human browser transaction"
+      },
+      {
+        "name": "fwd_iat_mean",
+        "shap_value": -0.38,
+        "value": 1.25,
+        "description": "Aperiodic human typing/browsing"
+      }
+    ],
+    "metadata": {
+      "hostname": "HOST-25",
+      "bytes": 2448599,
+      "duration": 37941736,
+      "model_source": "EnsembleDetector"
+    },
+    "expected_techniques": [],
+    "expected_severity": "LOW"
+  },
+  {
+    "flow_id": "FLOW-2026-041",
+    "timestamp": "2026-09-30T03:30:00Z",
+    "src_ip": "192.168.1.60",
+    "dst_ip": "192.168.1.50",
+    "src_port": 53503,
+    "dst_port": 22,
+    "protocol": "TCP",
+    "predicted_label": "Lateral_Movement",
+    "confidence": 0.88,
+    "top_features": [
+      {
+        "name": "dst_port",
+        "shap_value": 0.47,
+        "value": 22,
+        "description": "Internal port 22 probe"
+      },
+      {
+        "name": "flow_duration",
+        "shap_value": 0.29,
+        "value": 350000.0,
+        "description": "Short burst connection"
+      }
+    ],
+    "metadata": {
+      "hostname": "HOST-60",
+      "bytes": 1660546,
+      "duration": 8793092,
+      "model_source": "EnsembleDetector"
+    },
+    "expected_techniques": [
+      "T1021.002",
+      "T1021.004"
+    ],
+    "expected_severity": "HIGH"
+  },
+  {
+    "flow_id": "FLOW-2026-042",
+    "timestamp": "2026-09-30T07:41:00Z",
+    "src_ip": "192.168.1.21",
+    "dst_ip": "192.168.1.78",
+    "src_port": 59329,
+    "dst_port": 445,
+    "protocol": "TCP",
+    "predicted_label": "Lateral_Movement",
+    "confidence": 0.97,
+    "top_features": [
+      {
+        "name": "dst_port",
+        "shap_value": 0.47,
+        "value": 445,
+        "description": "Internal port 445 probe"
+      },
+      {
+        "name": "flow_duration",
+        "shap_value": 0.29,
+        "value": 350000.0,
+        "description": "Short burst connection"
+      }
+    ],
+    "metadata": {
+      "hostname": "HOST-21",
+      "bytes": 2361866,
+      "duration": 6719628,
+      "model_source": "EnsembleDetector"
+    },
+    "expected_techniques": [
+      "T1021.002",
+      "T1021.004"
+    ],
+    "expected_severity": "HIGH"
+  },
+  {
+    "flow_id": "FLOW-2026-043",
+    "timestamp": "2026-09-29T12:10:00Z",
+    "src_ip": "194.26.29.112",
+    "dst_ip": "192.168.1.51",
+    "src_port": 55206,
+    "dst_port": 80,
+    "protocol": "TCP",
+    "predicted_label": "Bot",
+    "confidence": 0.83,
+    "top_features": [
+      {
+        "name": "flow_duration",
+        "shap_value": 0.38,
+        "value": 50000.0,
+        "description": "Repeated auth attempt"
+      },
+      {
+        "name": "dst_port",
+        "shap_value": 0.3,
+        "value": 80,
+        "description": "Authentication service port"
+      }
+    ],
+    "metadata": {
+      "hostname": "HOST-112",
+      "bytes": 1195823,
+      "duration": 10596210,
+      "model_source": "EnsembleDetector"
+    },
+    "expected_techniques": [
+      "T1584",
+      "T1071.001"
+    ],
+    "expected_severity": "HIGH"
+  },
+  {
+    "flow_id": "FLOW-2026-044",
+    "timestamp": "2026-09-30T00:37:00Z",
+    "src_ip": "192.168.1.87",
+    "dst_ip": "185.220.101.5",
+    "src_port": 60094,
+    "dst_port": 53,
+    "protocol": "UDP",
+    "predicted_label": "BENIGN",
+    "confidence": 0.26,
+    "top_features": [
+      {
+        "name": "flow_duration",
+        "shap_value": -0.42,
+        "value": 15000.0,
+        "description": "Normal human browser transaction"
+      },
+      {
+        "name": "fwd_iat_mean",
+        "shap_value": -0.38,
+        "value": 1.25,
+        "description": "Aperiodic human typing/browsing"
+      }
+    ],
+    "metadata": {
+      "hostname": "HOST-87",
+      "bytes": 2326670,
+      "duration": 20100967,
+      "model_source": "EnsembleDetector"
+    },
+    "expected_techniques": [],
+    "expected_severity": "LOW"
+  },
+  {
+    "flow_id": "FLOW-2026-045",
+    "timestamp": "2026-09-29T13:12:00Z",
+    "src_ip": "192.168.1.33",
+    "dst_ip": "1.1.1.1",
+    "src_port": 51698,
+    "dst_port": 80,
+    "protocol": "TCP",
+    "predicted_label": "BENIGN",
+    "confidence": 0.09,
+    "top_features": [
+      {
+        "name": "flow_duration",
+        "shap_value": -0.42,
+        "value": 15000.0,
+        "description": "Normal human browser transaction"
+      },
+      {
+        "name": "fwd_iat_mean",
+        "shap_value": -0.38,
+        "value": 1.25,
+        "description": "Aperiodic human typing/browsing"
+      }
+    ],
+    "metadata": {
+      "hostname": "HOST-33",
+      "bytes": 1142811,
+      "duration": 18918343,
+      "model_source": "EnsembleDetector"
+    },
+    "expected_techniques": [],
+    "expected_severity": "LOW"
+  }
+]
